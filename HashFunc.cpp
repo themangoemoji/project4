@@ -10,24 +10,14 @@ using namespace std;
  */
 unsigned int HashA(const std::string& s)
 {
-    unsigned int poop = 0; unsigned int pack;
-    //exclude trailing blanks
-    int i = 0, j = 0, slength = 0;
-    for (int len = 0; len != s.length(); len++)
-    {
-        for(pack = 0, j = 0; ; j++, i++)
-        {
-            pack |= (unsigned long) s[i];
-            if (j == 3 || i == slength - 1)
-            {
-                i++;
-                break;
-            }
-            pack <<= 8;
-        }
-        poop ^= pack;
-    }
-    return poop;
+   unsigned int hash = 5381;
+
+   for(std::size_t i = 0; i < s.length(); i++)
+   {
+      hash = ((hash << 5) + hash) + s[i];
+   }
+
+   return hash;
 }
 
 /**
