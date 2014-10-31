@@ -23,6 +23,7 @@ void Test(vector<T> &items, HashSet<T> &set)
     cout << "Actual load factor: " << set.GetLoad() << endl;
     cout << "Max number of items in a bucket: " << set.MaxBucketSize() << endl;
     cout << "Percent of empty buckets: " << set.PercentEmptyBuckets() << endl;
+    set.Clear();
 }
 
 int main(int argc, char* argv[])

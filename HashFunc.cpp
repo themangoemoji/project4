@@ -19,18 +19,20 @@ unsigned int HashA(const std::string& s)
 }
 
 /**
- * Put information about this hash function here
+ * JavaHash
  */
 unsigned int HashB(const std::string& s)
 {
-    unsigned int seed = 131;
+    unsigned int seed = 31;
     unsigned int result = 0;
+
     for (const char c : s)
     {
         result *= seed;
-        result += (unsigned int) c;
+        result += (unsigned int)c;
     }
     return result;
+
 }
 
 /**

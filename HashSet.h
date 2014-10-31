@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
 using std::vector;
 
 template<class T>
@@ -31,9 +32,10 @@ class HashSet
         double GetLoad() const { return ((double)Size()) / (double)NumBuckets(); }
 
         // Methods that you must complete
-        unsigned int NumBuckets() const { /* TODO */ return 0; }
+        unsigned int NumBuckets() const { return mTableSize; }
         bool Contains(const T& item) const;
         bool Insert(const T &item);
+        unsigned int Index(const T &item);
         bool Remove(const T &item);
         void Clear();
         void ForEach(std::function<void (const T&)> func) const;
@@ -46,15 +48,19 @@ class HashSet
         std::function<unsigned int (const T&)> hash;
         vector<T> mNulVec;
         // You need some data source to store items
-        
+
         // Size of default table
         unsigned int mTableSize = 10;
-        
+
         // The underlying set structure
         vector<vector<T>> mTable; 
 
+        // Temporary vector used for resizing
+        vector<T> resizeVec;
 
         // You can put any helper methods here
+
+        
 };
 
 /**
@@ -104,15 +110,14 @@ bool HashSet<T>::Contains(const T &item) const
 {
     // TODO
     unsigned int hashed = hash(item);
-    unsigned int bucket = hashed % mTableSize;
-    for(int i= 0; i != mTable[bucket].size(); i++)
+    unsigned int bucket = hashed % NumBuckets();
+    for(int i = 0; i != mTable[bucket].size(); i++)
     {
-        if(item == mTable[bucket][i])
+        if(mTable[bucket][i] == item)
         {
             return true;
         }
     }
-    
     return false;
 }
 
@@ -128,7 +133,49 @@ bool HashSet<T>::Insert(const T &item)
     // after insert, if the load is too big, call rehash
     // make helper method hashset
     // load factor is mean number of items (items/buckets)
-    return false;
+    if (! Contains(item))
+    {
+        unsigned int hashed = hash(item);
+        unsigned int bucket = hashed % mTableSize;
+        size++;
+        mTable[bucket].push_back(item);
+
+        // Resizing the hashtable
+        if (GetLoad() > GetLoadFactor())
+        {
+
+            //ForEach();
+            // ForEach standin, add each item to temp vector
+            for(int bucket = 0; bucket != NumBuckets(); bucket++)
+            {
+                for (int item = 0; item != mTable[bucket].size(); item++)
+                {
+                    resizeVec.push_back((mTable[bucket][item]));
+                }
+            }
+
+            //clear the set
+            Clear();            
+
+            //add new buckets
+            for(int i = 0; i < mTableSize; i++)
+            {
+                mTable.push_back(mNulVec);
+            }
+
+            //resize the set
+            mTableSize = (NumBuckets() * 2);
+
+            // recursize call to insert
+            for(int i = 0; i < resizeVec.size(); i++)
+            {
+                Insert(resizeVec[i]);
+            }
+        }
+        return true;
+    }
+    else
+        return false;
 }
 
 /**
@@ -148,7 +195,11 @@ bool HashSet<T>::Remove(const T &item)
     template<class T>
 void HashSet<T>::Clear()
 {
-    // TODO
+    for (int i = 0; i != NumBuckets(); i++)
+    {
+        mTable[i].clear();
+        size = 0;
+    } 
 }
 
 /**
@@ -158,7 +209,13 @@ void HashSet<T>::Clear()
 template<class T>
 void HashSet<T>::ForEach(std::function<void (const T&)> func) const
 {
-    // TODO
+    for(int bucket = 0; bucket != NumBuckets(); bucket++)
+    {
+        for (int item = 0; item != mTable[bucket].size(); item++)
+        {
+            func(mTable[bucket][item]);
+        }
+    }
 }
 
 /**
@@ -167,8 +224,17 @@ void HashSet<T>::ForEach(std::function<void (const T&)> func) const
 template<class T>
 unsigned int HashSet<T>::MaxBucketSize() const
 {
-    // TODO
-    return 0;
+    double highestBucket = 0, currBucket = 0;
+
+    for(int bucket = 0; bucket != NumBuckets(); bucket++)
+    {
+        currBucket = mTable[bucket].size();
+        if(currBucket > highestBucket)
+        {
+            highestBucket = currBucket;
+        }
+    }     
+    return highestBucket; 
 }
 
 /**
@@ -178,8 +244,25 @@ unsigned int HashSet<T>::MaxBucketSize() const
 template<class T>
 double HashSet<T>::PercentEmptyBuckets() const
 {
-    // TODO
-    return 100.0;
+    double numFull = 0;
+    for(int i = 0; i != NumBuckets(); i++)
+    {
+        if(mTable[i].size() != 0)
+        {
+            numFull++;
+        }
+    }     
+    return (((NumBuckets()-numFull)/NumBuckets())*100);
 }
+
+/*
+   template<class T>
+   unsigned int HashSet<T>::Index(const T &item)
+   {
+   unsigned int hashed = hash(item);
+   unsigned int bucket = hashed % mTableSize;
+   return bucket;
+   }
+   */
 
 #endif
