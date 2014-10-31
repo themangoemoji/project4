@@ -2,6 +2,8 @@
  * A hash set.
  * Stub written by James Daly, 8 Oct 2014
  * Completed by Michael Wright
+ * Colaborated with Joe Dinkha and Ian Ferguson 
+ * for whiteboard ideas to implement methods
  */
 #pragma once
 
@@ -108,7 +110,6 @@ HashSet<T>::~HashSet()
 template<class T>
 bool HashSet<T>::Contains(const T &item) const
 {
-    // TODO
     unsigned int hashed = hash(item);
     unsigned int bucket = hashed % NumBuckets();
     for(int i = 0; i != mTable[bucket].size(); i++)
@@ -129,7 +130,6 @@ bool HashSet<T>::Contains(const T &item) const
     template<class T>
 bool HashSet<T>::Insert(const T &item)
 {
-    // TODO
     // after insert, if the load is too big, call rehash
     // make helper method hashset
     // load factor is mean number of items (items/buckets)
@@ -139,7 +139,6 @@ bool HashSet<T>::Insert(const T &item)
         unsigned int bucket = hashed % mTableSize;
         size++;
         mTable[bucket].push_back(item);
-        Remove(item);
 
         // Resizing the hashtable
         if (GetLoad() > GetLoadFactor())
