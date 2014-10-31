@@ -139,6 +139,7 @@ bool HashSet<T>::Insert(const T &item)
         unsigned int bucket = hashed % mTableSize;
         size++;
         mTable[bucket].push_back(item);
+        Remove(item);
 
         // Resizing the hashtable
         if (GetLoad() > GetLoadFactor())
@@ -185,7 +186,21 @@ bool HashSet<T>::Insert(const T &item)
     template<class T>
 bool HashSet<T>::Remove(const T &item)
 {
-    // TODO
+    for(int bucket = 0; bucket != NumBuckets(); bucket++)
+    {
+        for (int i= 0; i != mTable[bucket].size(); i++)
+        {
+            if(item == mTable[bucket][i])
+            {
+                //decrement the size
+                size--;
+                //find and delete our item
+                mTable[bucket].erase(std::remove(mTable[bucket].begin(), 
+                           mTable[bucket].end(), item), mTable[bucket].end());
+                return true;
+            }
+        }
+    }
     return false;
 }
 
