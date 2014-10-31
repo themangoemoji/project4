@@ -5,16 +5,29 @@
 using namespace std;
 
 /**
- * "Data Structures and Algorithms in C++ -- 4th Edition
- *  Hashing with Buckets - pg 579
+ * This hash algorithm is based on work by Peter J. Weinberger of AT&T Bell Labs. 
+ * The book Compilers (Principles, Techniques and Tools) by Aho, Sethi and Ulman, 
+ * recommends the use of hash functions that employ the hashing methodology 
+ * found in this particular algorithm.
+ * found also at http://www.partow.net/programming/hashfunctions/#APHashFunction 
  */
 unsigned int HashA(const std::string& s)
 {
-   unsigned int hash = 5381;
+   unsigned int BitsInUnsignedInt = (unsigned int)(sizeof(unsigned int) * 8);
+   unsigned int ThreeQuarters     = (unsigned int)((BitsInUnsignedInt  * 3) / 4);
+   unsigned int OneEighth         = (unsigned int)(BitsInUnsignedInt / 8);
+   unsigned int HighBits          = (unsigned int)(0xFFFFFFFF) << (BitsInUnsignedInt - OneEighth);
+   unsigned int hash              = 0;
+   unsigned int test              = 0;
 
    for(std::size_t i = 0; i < s.length(); i++)
    {
-      hash = ((hash << 5) + hash) + s[i];
+      hash = (hash << OneEighth) + s[i];
+
+      if((test = hash & HighBits)  != 0)
+      {
+         hash = (( hash ^ (test >> ThreeQuarters)) & (~HighBits));
+      }
    }
 
    return hash;
@@ -22,6 +35,7 @@ unsigned int HashA(const std::string& s)
 
 /**
  * JavaHash
+ * Given by TAs in Bone lab
  */
 unsigned int HashB(const std::string& s)
 {
@@ -38,17 +52,16 @@ unsigned int HashB(const std::string& s)
 }
 
 /**
- * An algorithm produced by Arash Partow. 
+ * A bitwise hash function written by Justin Sobel
  * found at http://www.partow.net/programming/hashfunctions/#APHashFunction 
  */
 unsigned int HashC(const std::string& s)
 {
-   unsigned int hash = 0xAAAAAAAA;
+   unsigned int hash = 1315423911;
 
    for(std::size_t i = 0; i < s.length(); i++)
    {
-      hash ^= ((i & 1) == 0) ? (  (hash <<  7) ^ s[i] * (hash >> 3)) :
-                               (~((hash << 11) + (s[i] ^ (hash >> 5))));
+      hash ^= ((hash << 5) + s[i] + (hash >> 2));
    }
 
    return hash;

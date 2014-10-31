@@ -75,7 +75,7 @@ HashSet<T>::HashSet(std::function<unsigned int(const T&)> hash, double loadFacto
     hash(hash)
 {
     // Empty: You can put other initialization information here
-    for(int i = 0; i < mTableSize; i++)
+    for(auto i = 0; i < mTableSize; i++)
     {
         mTable.push_back(mNulVec);
     }
@@ -112,7 +112,7 @@ bool HashSet<T>::Contains(const T &item) const
 {
     unsigned int hashed = hash(item);
     unsigned int bucket = hashed % NumBuckets();
-    for(int i = 0; i != mTable[bucket].size(); i++)
+    for(auto i = 0; i != mTable[bucket].size(); i++)
     {
         if(mTable[bucket][i] == item)
         {
@@ -146,9 +146,9 @@ bool HashSet<T>::Insert(const T &item)
 
             //ForEach();
             // ForEach standin, add each item to temp vector
-            for(int bucket = 0; bucket != NumBuckets(); bucket++)
+            for(auto bucket = 0; bucket != NumBuckets(); bucket++)
             {
-                for (int item = 0; item != mTable[bucket].size(); item++)
+                for (auto item = 0; item != mTable[bucket].size(); item++)
                 {
                     resizeVec.push_back((mTable[bucket][item]));
                 }
@@ -158,7 +158,7 @@ bool HashSet<T>::Insert(const T &item)
             Clear();            
 
             //add new buckets
-            for(int i = 0; i < mTableSize; i++)
+            for(auto i = 0; i < mTableSize; i++)
             {
                 mTable.push_back(mNulVec);
             }
@@ -167,7 +167,7 @@ bool HashSet<T>::Insert(const T &item)
             mTableSize = (NumBuckets() * 2);
 
             // recursize call to insert
-            for(int i = 0; i < resizeVec.size(); i++)
+            for(auto i = 0; i < resizeVec.size(); i++)
             {
                 Insert(resizeVec[i]);
             }
@@ -185,9 +185,9 @@ bool HashSet<T>::Insert(const T &item)
     template<class T>
 bool HashSet<T>::Remove(const T &item)
 {
-    for(int bucket = 0; bucket != NumBuckets(); bucket++)
+    for(auto bucket = 0; bucket != NumBuckets(); bucket++)
     {
-        for (int i= 0; i != mTable[bucket].size(); i++)
+        for(auto i= 0; i != mTable[bucket].size(); i++)
         {
             if(item == mTable[bucket][i])
             {
@@ -209,7 +209,7 @@ bool HashSet<T>::Remove(const T &item)
     template<class T>
 void HashSet<T>::Clear()
 {
-    for (int i = 0; i != NumBuckets(); i++)
+    for (auto i = 0; i != NumBuckets(); i++)
     {
         mTable[i].clear();
         size = 0;
@@ -223,9 +223,9 @@ void HashSet<T>::Clear()
 template<class T>
 void HashSet<T>::ForEach(std::function<void (const T&)> func) const
 {
-    for(int bucket = 0; bucket != NumBuckets(); bucket++)
+    for(auto bucket = 0; bucket != NumBuckets(); bucket++)
     {
-        for (int item = 0; item != mTable[bucket].size(); item++)
+        for(auto item = 0; item != mTable[bucket].size(); item++)
         {
             func(mTable[bucket][item]);
         }
@@ -240,7 +240,7 @@ unsigned int HashSet<T>::MaxBucketSize() const
 {
     double highestBucket = 0, currBucket = 0;
 
-    for(int bucket = 0; bucket != NumBuckets(); bucket++)
+    for(auto bucket = 0; bucket != NumBuckets(); bucket++)
     {
         currBucket = mTable[bucket].size();
         if(currBucket > highestBucket)
@@ -259,7 +259,7 @@ template<class T>
 double HashSet<T>::PercentEmptyBuckets() const
 {
     double numFull = 0;
-    for(int i = 0; i != NumBuckets(); i++)
+    for(auto i = 0; i != NumBuckets(); i++)
     {
         if(mTable[i].size() != 0)
         {
