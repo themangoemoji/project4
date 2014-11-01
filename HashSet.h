@@ -62,7 +62,8 @@ class HashSet
 
         // You can put any helper methods here
 
-        
+
+
 };
 
 /**
@@ -143,16 +144,14 @@ bool HashSet<T>::Insert(const T &item)
         // Resizing the hashtable
         if (GetLoad() > GetLoadFactor())
         {
-
-            //ForEach();
-            // ForEach standin, add each item to temp vector
-            for(auto bucket = 0; bucket != NumBuckets(); bucket++)
+            
+            //this code was taken from James Daly
+            auto pushingLambda = [&](const T&item)
             {
-                for (auto item = 0; item != mTable[bucket].size(); item++)
-                {
-                    resizeVec.push_back((mTable[bucket][item]));
-                }
-            }
+                resizeVec.push_back(item);
+            };
+
+            ForEach(pushingLambda);
 
             //clear the set
             Clear();            
@@ -195,7 +194,7 @@ bool HashSet<T>::Remove(const T &item)
                 size--;
                 //find and delete our item
                 mTable[bucket].erase(std::remove(mTable[bucket].begin(), 
-                           mTable[bucket].end(), item), mTable[bucket].end());
+                            mTable[bucket].end(), item), mTable[bucket].end());
                 return true;
             }
         }
